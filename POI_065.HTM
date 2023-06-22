@@ -1069,6 +1069,12 @@
         let cmt ; //: @cmt@ : camera_magnitude_target ::[62P]://
         let per ; //: @per@ : Percent( towards:c_cm0 ) :[62P]://
                                                     //::[---]://
+        let mv1_x;//: @mv1_x@ : Magnitude_of_VP1.X  //::[65P]://
+        let mv1_y;//: @mv1_y@ : Magnitude_of_VP1.Y  //::[65P]://
+                                                    //::[65P]://
+        let cm0_x;//: @cm0_x@ : Proportional_To[ vp0 ]  [65P]://
+        let cm0_y;//: @cm0_y@ : Proportional_To[ vp0 ]  [65P]://
+                                                    //::[---]://
         let cmt_x;//: @cmt_x@ : Proportional_To[ vp0 ]  [63P]://
         let cmt_y;//: @cmt_y@ : Proportional_To[ vp0 ]  [63P]://
                                                     //::[---]://
@@ -1118,14 +1124,25 @@
                 fac_y =(mv0_y/F_MAX(mv0_x,mv0_y));  //::[63P]://
             };;                                     //::[63P]://
                                                     //::[63P]://
-            cmt_x =( cmt * fac_x );                 //::[63P]://
-            cmt_y =( cmt * fac_y );                 //::[63P]://
+            cm0_x =( c_cm0 * fac_x );//: $_0_PER_MAG_$  [65P]://
+            cm0_y =( c_cm0 * fac_y );//: $_0_PER_MAG_$  [65P]://
+                                                    //::[---]://
+            cmt_x =(   cmt * fac_x );//: $_1_PER_MAG_$  [65P]   [63P]://
+            cmt_y =(   cmt * fac_y );//: $_1_PER_MAG_$  [65P]   [63P]://
         }                                           //::[63P]://
         //:---------------------------:#_CAMERA_RATIO_#:[63P]://
-
-
-        
-
+        //:#_SCALE_TO_TARGET_#:------------------------:[65P]://
+        {                                           //::[65P]://
+            let p_0 =( 1.0-per );; //: $_BEG_PERCENT_$  [65P]://
+            let p_1 =(     per );; //: $_END_PERCENT_$  [65P]://
+                                                    //::[65P]://
+            mv1_x =( ( cm0_x * p_0 )                //::[65P]://
+                  +  ( cmt_x * p_1 ) );;            //::[65P]://
+            mv1_y =( ( cm0_y * p_0 )                //::[65P]://
+                  +  ( cmt_y * p_1 ) );;            //::[65P]://
+        }                                           //::[65P]://
+        //:------------------------:#_SCALE_TO_TARGET_#:[65P]://
+       
     };;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;//::[57P]://
     //:---------:#__SNAP_LOW_LEV_CAM_TO_HIGH_LEV_CAM__#:[57P]://
     ////////////////////////////////////////////////////////////
@@ -3219,9 +3236,35 @@
         $_C_M_NEU_$ : @cm0@ : Camera_Magnitude.NEUTRAL    |[64P]
                                                           |[64P]
     :----------------------:?_CAMERA_MAGNITUDE_CONSTANTS_?:[64P]
-
-
-
+    $_0_PER_MAG_$ :---------------------------------------:[65P]
+                                                          |[65P]
+        The magnitude of X and Y edges of the             |[65P]
+        off screen data viewport( vp1 )when               |[65P]
+        we are at ZERO_PERCENT_ZOOM.                      |[65P]
+                                                          |[65P]
+        @0_PER_MAG@ : Zero_Percent_Magnitude              |[65P]
+                                                          |[65P]
+    :---------------------------------------:$_0_PER_MAG_$:[65P]
+    $_1_PER_MAG_$ :---------------------------------------:[65P]
+                                                          |[65P]
+        The magnitude of X and Y edges of the             |[65P]
+        off screen data viewport( vp1 )when               |[65P]
+        we are at ONE_HUNDRED_PERCENT_ZOOM.               |[65P]
+                                                          |[65P]
+        @1_PER_MAG@ : ONE_hundred_Percent_Magnitude       |[65P]
+                                                          |[65P]
+    :---------------------------------------:$_1_PER_MAG_$:[65P]
+    #_SCALE_TO_TARGET_# :---------------------------------:[65P]
+                                                          |[65P]
+        Scale our[ vp1 ]value by interpolating between    |[65P]
+        the starting viewport magnitude and ending        |[65P]
+        viewport magnitude, using the interpolation       |[65P]
+        perctange as a weight.                            |[65P]
+                                                          |[65P]
+        $_BEG_PERCENT_$ : Beginning Percentage ( @p_0@ )  |[65P]
+        $_END_PERCENT_$ : Ending    Percentage ( @p_1@ )  |[65P]
+                                                          |[65P]
+    :---------------------------------:#_SCALE_TO_TARGET_#:[65P]
                                                            [---]
 *** ******************* #__DOC_SEC__#:[004_POI]:**/ // [004_POI]
                                                     // [---=---]
